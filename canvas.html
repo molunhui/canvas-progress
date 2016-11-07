@@ -5,15 +5,175 @@
     <title>Document</title>
 </head>
 <body>
-    <canvas width="240" height="240"></canvas>
+    <canvas width="240" height="240" id="testCanvas"></canvas>
 </body>
+    <script src="./conicalGradient.js"></script>
     <script>
-        var circ = Math.PI *2,
-            quart = Math.PI /2,
+        var PI = Math.PI
+            circ = PI *2,
+            quart = PI /2,
             innnerWidth = 10,       // 内环厚度
             outWidth = 16,          // 外环厚度
             bgStockStyle = '#dbdaf1', // 内环背景色
-            socre = 37,             // 当前进度
+            score = 37,             // 当前进度
+            fillColor = '#fff';
+
+        var el = document.getElementById("testCanvas");
+        var width = el.getAttribute('width'),
+            height = el.getAttribute('height');
+
+        var canvas = document.getElementById('testCanvas');
+        if (canvas.getContext){
+          var ctx = canvas.getContext('2d');
+        }
+        console.log(ctx)
+        // 执行
+        init()
+
+        // 动画
+        function animate(opts) {
+            var start = new Date()
+
+            var id = setInterval(function() {
+                var timePasses = new Date() - start;
+                var progress = timePasses / opts.duration;
+
+                if (progress > 1) progress = 1;
+
+                var delta = opts.delta(progress);
+                opts.step(delta);
+
+                if (progress == 1) {
+                    clearInterval(id)
+                }
+            }, opts.delay || 10)
+        }
+        // 初始化
+        function init() {
+            animate({
+                delay: 1000/60,
+                duration: 500,
+                delta: function(progress) {
+                    return progress;
+                },
+                step: function(ease) {
+                    drawDelta(ease)
+                }
+            });
+        }
+
+        // 画图
+       function drawDelta(ease) {
+
+            ctx.clearRect(0, 0, width, height)
+            // 画背景
+            drawBg();
+
+            // 画圆弧
+            drawGradua(ease);
+
+            // 白色遮罩
+            drawCover();
+        }
+
+        function drawBg() {
+            var startArc = 0.75*PI,
+                endArc = 0.25*PI,
+                color = bgStockStyle,
+                lineWidth = innnerWidth;
+            drawLineArc(startArc, endArc, color, lineWidth);
+        }
+
+        function drawLineArc (startArc, endArc, color, lineWidth) {
+            // var imd = ctx.getImageData(0, 0, width, height)
+            // ctx.putImageData(imd, 0, 0);
+
+            ctx.save();
+
+            ctx.beginPath();
+            console.log(width,height,startArc, endArc, lineWidth)
+            ctx.arc(width / 2, height / 2, width * 0.5 * 0.8, startArc,endArc , false);
+            ctx.lineWidth = lineWidth;
+            ctx.lineCap = "round";
+            ctx.strokeStyle = color;
+
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        function drawGradua(ease) {
+            var startColor, endColor;
+            var startArc = 0.75*PI,
+                endArc = 0.75*Math.PI + (1.5 * Math.PI * score/100 * ease);
+
+            ctx.save()
+
+            console.log(score)
+            if (score <=0) {
+              return false
+            }
+
+            if(score < 60 && score> 0) {
+              startColor = [255,97,148]
+              endColor = [254, 166, 124]
+            }
+
+            if(score >=60 && score < 80) {
+              startColor = [105,137,255]
+              endColor = [68, 238, 236]
+            }
+
+            if(score >=80 && score <= 100) {
+              startColor = [14,207,175]
+              endColor = [68, 238, 236]
+            }
+
+            if (score >= 2) {
+               if (ease > 0.1) {
+                // 画圆弧1
+                var starArc1 = startArc - 1/90*PI,
+                    endArc1  = startArc + 1/90*PI,
+                    color1 = `rgb(${startColor})`,
+                    lineWidth1 = outWidth;
+                this.drawLineArc(starArc1, endArc1, color1, lineWidth1)
+              }
+
+              if (ease > 0.8) {
+                // 圆弧2
+                var starArc2 = endArc - 1/90*PI,
+                    endArc2  = endArc + 1/90*PI,
+                    color2 = `rgb(${endColor})`,
+                    lineWidth2 = outWidth;
+
+                this.drawLineArc(starArc2, endArc2, color2, lineWidth2)
+              }
+            }
+
+            console.log(startColor, endColor)
+            // 渐变
+            new ConicalGradient()
+              .addColorStop(0, startColor)
+              .addColorStop(1, endColor)
+              .fill(ctx,
+                  this.width/2,
+                  this.width/2,
+                  this.width/2*0.8 + this.outWidth/2,
+                  startArc,
+                  endArc,
+                  false)
+            ctx.restore();
+        }
+
+        // 白色背景
+        function drawCover() {
+            ctx.save()
+            ctx.beginPath();
+            ctx.arc(width/2, width/2, width/2*0.8 - outWidth/2, 0, Math.PI * 2, false);
+            ctx.fillStyle = fillColor;
+            ctx.fill()
+            ctx.restore();
+        }
 
     </script>
 </html>
