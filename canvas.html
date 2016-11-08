@@ -15,7 +15,7 @@
             innnerWidth = 10,       // 内环厚度
             outWidth = 16,          // 外环厚度
             bgStockStyle = '#dbdaf1', // 内环背景色
-            score = 37,             // 当前进度
+            score = 80,             // 当前进度
             fillColor = '#fff';
 
         var el = document.getElementById("testCanvas");
@@ -110,29 +110,30 @@
             var startColor, endColor;
             var startArc = 0.75*PI,
                 endArc = 0.75*Math.PI + (1.5 * Math.PI * score/100 * ease);
+            var iScore = score * ease;
 
             ctx.save()
 
-            if (score <=0) {
+            if (iScore <=0) {
               return false
             }
 
-            if(score < 60 && score> 0) {
+            if(iScore < 60 && iScore> 0) {
               startColor = [255,97,148]
               endColor = [254, 166, 124]
             }
 
-            if(score >=60 && score < 80) {
+            if(iScore >=60 && iScore < 80) {
               startColor = [105,137,255]
               endColor = [68, 238, 236]
             }
 
-            if(score >=80 && score <= 100) {
+            if(iScore >=80 && iScore <= 100) {
               startColor = [14,207,175]
               endColor = [68, 238, 236]
             }
 
-            if (score >= 2) {
+            if (iScore >= 2) {
                if (ease > 0.1) {
                 // 画圆弧1
                 var starArc1 = startArc - 1/90*PI,
