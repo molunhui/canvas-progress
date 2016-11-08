@@ -26,7 +26,7 @@
         if (canvas.getContext){
           var ctx = canvas.getContext('2d');
         }
-        console.log(ctx)
+
         // 执行
         init()
 
@@ -74,6 +74,11 @@
 
             // 白色遮罩
             drawCover();
+
+            // 画进度
+            drawProgress();
+
+            drawTxt()
         }
 
         function drawBg() {
@@ -91,7 +96,6 @@
             ctx.save();
 
             ctx.beginPath();
-            console.log(width,height,startArc, endArc, lineWidth)
             ctx.arc(width / 2, height / 2, width * 0.5 * 0.8, startArc,endArc , false);
             ctx.lineWidth = lineWidth;
             ctx.lineCap = "round";
@@ -109,7 +113,6 @@
 
             ctx.save()
 
-            console.log(score)
             if (score <=0) {
               return false
             }
@@ -150,7 +153,6 @@
               }
             }
 
-            console.log(startColor, endColor)
             // 渐变
             new ConicalGradient()
               .addColorStop(0, startColor)
@@ -173,6 +175,24 @@
             ctx.fillStyle = fillColor;
             ctx.fill()
             ctx.restore();
+        }
+
+        // 进度
+        function drawProgress() {
+            ctx.save();
+            ctx.fillStyle = '#705e90';
+            ctx.textBaseline = 'middle';
+            ctx.textAlign = 'center';
+            ctx.font = "46px weiruanyahei";
+            ctx.fillText(score + '%', width / 2, height / 2);
+        }
+
+        function drawTxt() {
+            ctx.fillStyle = '#705e90';
+            ctx.textBaseline = 'bottom';
+            ctx.textAlign = 'center';
+            ctx.font = '30px weiruanyahei';
+            ctx.fillText('某进度' , width / 2, height - 10);
         }
 
     </script>
